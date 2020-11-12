@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 
-train_cmd="utils/run.pl"
+# Setting the command of training and decoding.
+train_cmd="utils/run.pl"    
 decode_cmd="utils/run.pl"
 
+# If directory waves_yesno does not exsit, then download the data from the internet source or exit 1 if anything went wrong.
+# Thena inzip the data.
 if [ ! -d waves_yesno ]; then
   wget http://www.openslr.org/resources/1/waves_yesno.tar.gz || exit 1;
   # was:
@@ -13,14 +16,19 @@ fi
 train_yesno=train_yesno
 test_base_name=test_yesno
 
+# Remove previous data
 rm -rf data exp mfcc
 
-# Data preparation
+# Data preparation #####################
 
-local/prepare_data.sh waves_yesno
-local/prepare_dict.sh
-utils/prepare_lang.sh --position-dependent-phones false data/local/dict "<SIL>" data/local/lang data/lang
-local/prepare_lm.sh
+local/prepare_data.sh waves_yesno   # prepare data, including training and testing data.
+local/prepare_dict.sh               # prepare dictionary (lexicon), and essential files.
+
+# Parse "extra_questions.txt  lexicon.txt nonsilence_phones.txt  optional_silence.txt  silence_phones.txt" these five files that local/prepare_dict.sh prepared to generate langauge directory.
+# utils/prepare_lang.sh Line 21 and 79. 
+utils/prepare_lang.sh --position-dependent-phones false data/local/dict "<SIL>" data/local/lang data/lang 
+local/prepare_lm.sh                 # Prepare language model, and convert arpabo to FST.
+#########################################
 
 # Feature extraction
 for x in train_yesno test_yesno; do 

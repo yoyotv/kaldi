@@ -4,6 +4,7 @@ mkdir -p data/local
 local=`pwd`/local
 scripts=`pwd`/scripts
 
+# Add command under tools/irstlm/bin.
 export PATH=$PATH:`pwd`/../../../tools/irstlm/bin
 
 echo "Preparing train and test data"
@@ -12,6 +13,7 @@ train_base_name=train_yesno
 test_base_name=test_yesno
 waves_dir=$1
 
+# List all information line by line and write into data/local/waves_all.list.
 ls -1 $waves_dir > data/local/waves_all.list
 
 cd data/local
@@ -26,11 +28,16 @@ cd data/local
 
 ../../local/create_yesno_txt.pl waves.train > ${train_base_name}.txt
 
+# Copy language model to destination.
+# For language model (arpa) formats, refer to http://www.seas.ucla.edu/spapl/weichu/htkbook/node244_ct.html#fg_stats and http://www.seas.ucla.edu/spapl/weichu/htkbook/node243_mn.html.
 cp ../../input/task.arpabo lm_tg.arpa
 
 cd ../..
 
 # This stage was copied from WSJ example
+
+# Make essentails files, i.e. spk2utt, utt2spk, text, wav.scp.
+# For these essential files, refer to https://kaldi-asr.org/doc/kaldi_for_dummies.html.
 for x in train_yesno test_yesno; do 
   mkdir -p data/$x
   cp data/local/${x}_wav.scp data/$x/wav.scp

@@ -103,6 +103,8 @@ int main(int argc, char *argv[]) {
     DoubleWriter utt2dur_writer(utt2dur_wspecifier);
 
     int32 num_utts = 0, num_success = 0;
+    
+    // Use "for" to loop all files
     for (; !reader.Done(); reader.Next()) {
       num_utts++;
       std::string utt = reader.Key();
@@ -142,6 +144,8 @@ int main(int argc, char *argv[]) {
         vtln_warp_local = vtln_warp;
       }
 
+
+      // Calculate mfcc features
       SubVector<BaseFloat> waveform(wave_data.Data(), this_chan);
       Matrix<BaseFloat> features;
       try {
@@ -158,6 +162,8 @@ int main(int argc, char *argv[]) {
         for (int32 i = 0; i < features.NumRows(); i++)
           features.Row(i).AddVec(-1.0, mean);
       }
+
+      // output the feature
       if (output_format == "kaldi") {
         kaldi_writer.Write(utt, features);
       } else {

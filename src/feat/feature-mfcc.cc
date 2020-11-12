@@ -34,11 +34,12 @@ void MfccComputer::Compute(BaseFloat signal_raw_log_energy,
 
   const MelBanks &mel_banks = *(GetMelBanks(vtln_warp));
 
+  // equation 7-17 => signal_raw_log_energy =  log( X(k)^2 )
   if (opts_.use_energy && !opts_.raw_energy)
     signal_raw_log_energy = Log(std::max<BaseFloat>(VecVec(*signal_frame, *signal_frame),
                                      std::numeric_limits<float>::epsilon()));
 
-  if (srfft_ != NULL)  // Compute FFT using the split-radix algorithm.
+  if (srfft_ != NULL)  // Compute FFT using the split-radix algorithm https://en.wikipedia.org/wiki/Split-radix_FFT_algorithm.
     srfft_->Compute(signal_frame->Data(), true);
   else  // An alternative algorithm that works for non-powers-of-two.
     RealFft(signal_frame, true);
